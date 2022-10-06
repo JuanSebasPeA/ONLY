@@ -12,19 +12,21 @@
 #define MAXLABEL 12
 #define PREFIX "@"
 #define POSFIX "_end"
-#define MAXARG 2
+#define MAXARG 3
 #define COMPREFIX '-'
+#define COMPREFIXTWO 'c'
 
 /* buffer de inicio de la sección y buffer de fin de la sección respectivamente */
 char sectionB[sizeof(PREFIX) + MAXLABEL ],		 
-	 sectionE[sizeof(PREFIX) + MAXLABEL + sizeof(POSFIX) ];
+	 sectionE[sizeof(PREFIX) + MAXLABEL + sizeof(POSFIX) ],
+	 comment[MAXLABEL];
 
 /* Prototipo de las funciones auxiliares */	
 int makeLabel(char *root, char *bLabel, char *eLabel );
 
 int countArg(char *arguments[], int len, char *argForLabel);
 
-int searchCom(char *arguments[], int size, char *comm);
+int searchComm(char *arguments[], int size, char *comm);
 
 /* Inicio de la función principal */
 int main(int argc, char* argv[]){       
@@ -40,6 +42,10 @@ int main(int argc, char* argv[]){
 	/* 1er paso: interpreta linea de comandos */
 	if ( !countArg(argv, len, name ) ) {
 		goto exit;
+	}
+	
+	if (len == 3) {
+		searchComm(argv, len, comment);
 	}
 	
 	/* 2do paso: construye la etiqueta */
@@ -119,15 +125,28 @@ int countArg(char *arguments[], int len, char *argForLabel ) {
 		return 0;
 	}
 	
-	for(i = 1; i != len; i++ ) {
-		if (i != 0 ){
-			strcpy(argForLabel, arguments[i] );
-			/* DEBUG 
-			printf("argForLabel es : %s", argForLabel); */
-			break;
-		}
-	} /* cierra for */
+	if (len == 2) {
+		strcpy(argForLabel, arguments[1] );
+		printf("\n the name of the label will be %s", argForLabel);
+		return 1;
+	}
+	else if (len == 3){
+		strcpy(argForLabel, arguments[2] );
+		printf("\n the name of the label will be %s", argForLabel);
+		return 1;
+	}
 } /* cierra la función */
+
+int searchComm(char *arguments[], int size, char *comm) {
+	strcpy(comm, arguments[1]);
+	printf("\n comm is: %s", comm);
+	if (comm[0] == COMPREFIX && comm[1] == COMPREFIXTWO) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
 
 
 
